@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>XSLT Transformation</title>
+  <script>
+    function transformXML() {
+      // 获取XML文档
+      var xml = document.getElementById("xmlInput").value;
+
+      // 获取XSLT样式表
+      var xslt = document.getElementById("xsltInput").value;
+
+      // 创建DOMParser对象解析XML和XSLT文本
+      var parser = new DOMParser();
+      var xmlDoc = parser.parseFromString(xml, "text/xml");
+      var xsltDoc = parser.parseFromString(xslt, "text/xml");
+
+      // 创建XSLT处理器对象
+      var processor = new XSLTProcessor();
+      processor.importStylesheet(xsltDoc);
+
+      // 执行转换
+      var resultDoc = processor.transformToDocument(xmlDoc);
+
+      // 将转换结果显示到页面上
+      var serializer = new XMLSerializer();
+      var resultStr = serializer.serializeToString(resultDoc);
+      document.getElementById("output").value = resultStr;
+    }
+  </script>
+</head>
+
+<body>
+  <h2>XSLT Transformation</h2>
+
+  <label for="xmlInput">XML Input:</label><br>
+  <textarea id="xmlInput" rows="10" cols="50">
+<?xml version="1.0" encoding="UTF-8"?>
+<students>
+    <student>
+        <name>John</name>
+        <age>20</age>
+        <major>Computer Science</major>
+    </student>
+    <student>
+        <name>Alice</name>
+        <age>22</age>
+        <major>Mathematics</major>
+    </student>
+</students>
+    </textarea><br>
+
+  <label for="xsltInput">XSLT Stylesheet:</label><br>
+  <textarea id="xsltInput" rows="10" cols="50">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+<xsl:template match="/">
+  <div>
+    <h2>Student Information</h2>
+    <table border="1">
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Major</th>
+      </tr>
+      <xsl:for-each select="students/student">
+        <tr>
+          <td><xsl:value-of select="name"/></td>
+          <td><xsl:value-of select="age"/></td>
+          <td><xsl:value-of select="major"/></td>
+        </tr>
+      </xsl:for-each>
+    </table>
+  </div>
+</xsl:template>
+
+</xsl:stylesheet>
+    </textarea><br>
+
+  <button onclick="transformXML()">Transform</button>
+
+  <h2>Output:</h2>
+  <textarea id="output" rows="10" cols="50"></textarea>
+</body>
+
+</html>
